@@ -44,6 +44,9 @@ export const useSiteStore = defineStore('site', {
   getters : {
     contentEndpoint(){
      return location.hostname.indexOf("localhost") >=0 ? "http://localhost:8000/api/content" : "/api/content"
+    },
+    battleShipEndpoint(){
+      return location.hostname.indexOf("localhost") >=0 ? "http://localhost:8000/api/battleship" : "/api/battleship"
     }
   }
 });
