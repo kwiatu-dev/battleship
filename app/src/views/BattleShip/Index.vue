@@ -19,6 +19,8 @@ const colors = {
 const size = battleship.value.player1.board.size
 const grid1 = battleship.value.player1.board.grid
 const grid2 = battleship.value.player2.board.grid
+
+console.log(battleship.value.history)
 </script>
 
 <template>

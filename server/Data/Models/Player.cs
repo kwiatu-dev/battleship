@@ -4,9 +4,11 @@ public class Player{
     public string id { get; }
     public Board board { get; set; }
     public List<List<bool>> shots { get; }
+    public List<List<bool>> sinkings { get; }
 
     public Player(string id){
         this.id = id;
         this.shots = Helpers.Initialize2DListWithValues(Game.boardSize, false);
+        this.sinkings = Helpers.Initialize2DListWithValues(Game.boardSize, false);
     }
 }

@@ -12,16 +12,5 @@ public class Board{
         this.ships = new List<Ship>();
         this.grid = Helpers.Initialize2DListWithValues(Game.boardSize, "");
     }
-
-    public void Add(Ship ship){
-        this.ships.Add(ship);
-        this.units += ship.size;
-
-        for(int x = ship.bow.x; x <= ship.stern.x; x++){
-            for(int y = ship.bow.y; y <= ship.stern.y; y++){
-                this.grid[y][x] = ship.type;
-            }
-        }
-    }
 }
 

@@ -28,12 +28,13 @@ public class Helpers{
     }
 
     public static bool IsShipIntersecting(Ship ship1, Ship ship2){
-        int det1 = Determinant3x3(ship1.bow, ship1.stern, ship2.bow);
-        int det2 = Determinant3x3(ship1.bow, ship1.stern, ship2.stern);
-        int sign1 = Math.Sign(Determinant3x3(ship1.bow, ship1.stern, ship2.bow));
-        int sign2 = Math.Sign(Determinant3x3(ship1.bow, ship1.stern, ship2.stern));
+        int det1 = Det(ship1.bow, ship1.stern, ship2.bow);
+        int det2 = Det(ship1.bow, ship1.stern, ship2.stern);
+        int sign1 = Math.Sign(Det(ship1.bow, ship1.stern, ship2.bow));
+        int sign2 = Math.Sign(Det(ship1.bow, ship1.stern, ship2.stern));
 
-        if(det1 == 0 || det2 == 0){
+        if(IsPointOnSegment(ship1.bow, ship1.stern, ship2.bow) || 
+           IsPointOnSegment(ship1.bow, ship1.stern, ship2.stern)){
             return true;
         }
         else if(sign1 != sign2){
@@ -74,15 +75,21 @@ public class Helpers{
                (B.y >= 0 && B.y < Game.boardSize);
     }
 
-    public static int Determinant3x3(Point A, Point B, Point C){
-        return B.x * (C.y - A.y) + C.x * (A.y - B.y) + A.x * (B.y - C.y);
+    public static int Det(Point A, Point B, Point C){
+        return A.x * B.y + A.y * C.x + B.x * C.y - (B.y * C.x + A.x * C.y + A.y * B.x);
     }
 
     public static bool IsCollinear(Point A, Point B, Point C){
-        int det = Determinant3x3(A, B, C);
+        int det = Det(A, B, C);
 
         return det == 0;
     }
+
+    public static bool IsPointOnSegment(Point A, Point B, Point C){
+        return Math.Min(A.x, B.x) <= C.x && C.x <= Math.Max(A.x, B.x) &&
+               Math.Min(A.y, B.y) <= C.y && C.y <= Math.Max(A.y, B.y) && 
+               IsCollinear(A, B, C);
+        }
 
     public static List<List<T>> Initialize2DListWithValues<T>(int size, T value)
     {

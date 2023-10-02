@@ -8,7 +8,6 @@ public class Ship{
     public int hp { get; set; }
     public Point bow { get; }
     public Point stern { get; }
-    public List<Point> hits { get; }
 
     public Ship(string type, int size, Point bow, Point stern){
         this.type = type;
@@ -16,6 +15,5 @@ public class Ship{
         this.stern = stern;
         this.size = size;
         this.hp = size;
-        this.hits = new List<Point>();
     }
 }
