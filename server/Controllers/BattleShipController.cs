@@ -12,9 +12,11 @@ public class BattleShipController: Controller
 
     public IActionResult Index()
     {
-        Simulation game = new Simulation();
-        game.SetBoardForPlayers();
+        Bot player1 = new Bot("player-1");
+        Bot player2 = new Bot("player-2");
+        Simulation game = new Simulation(player1, player2);
+        game.Init();
 
-        return Json(game);
+        return Json("game");
     }
 }

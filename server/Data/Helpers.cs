@@ -83,4 +83,21 @@ public class Helpers{
 
         return det == 0;
     }
+
+    public static List<List<T>> Initialize2DListWithValues<T>(int size, T value)
+    {
+        List<List<T>> map = new List<List<T>>();
+
+        for (int y = 0; y < size; y++){
+            List<T> row = new List<T>();
+
+            for (int x = 0; x < size; x++){
+                row.Add(value);
+            }
+
+            map.Add(row);
+        }
+
+        return map;
+    }
 }
