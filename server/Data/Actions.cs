@@ -7,13 +7,27 @@ public class Actions{
         bool hit = false;
         bool sunk = false;
 
+        if(player.shots[p.y][p.x] == true){
+            throw new ArgumentException("This location has already been shot at");
+        }
+
         foreach (Ship ship in oponent.board.ships){
             if(Helpers.IsPointOnSegment(ship.bow, ship.stern, p)){
                 ship.hp--;
                 oponent.board.units--;
-                player.sinkings[p.y][p.x] = true;
                 hit = true;
+                player.sinkings[p.y][p.x] = true;
                 if(ship.hp == 0) sunk = true;
+
+                if(ship.hp < 0){
+                    throw new ArgumentException("Health points cannot be less than 0");
+                }
+
+                if(oponent.board.units < 0){
+                    throw new ArgumentException("Units cannot be less then 0");
+                }
+
+                break;
             }
         }
 

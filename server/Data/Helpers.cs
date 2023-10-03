@@ -27,14 +27,20 @@ public class Helpers{
         return false;
     }
 
+    public static bool IsShipsEndpointsIntersecting(Ship ship1, Ship ship2){
+        return IsPointOnSegment(ship1.bow, ship1.stern, ship2.bow) || 
+               IsPointOnSegment(ship1.bow, ship1.stern, ship2.stern) ||
+               IsPointOnSegment(ship2.bow, ship2.stern, ship1.bow) ||
+               IsPointOnSegment(ship2.bow, ship2.stern, ship1.stern);
+    }
+
     public static bool IsShipIntersecting(Ship ship1, Ship ship2){
         int det1 = Det(ship1.bow, ship1.stern, ship2.bow);
         int det2 = Det(ship1.bow, ship1.stern, ship2.stern);
-        int sign1 = Math.Sign(Det(ship1.bow, ship1.stern, ship2.bow));
-        int sign2 = Math.Sign(Det(ship1.bow, ship1.stern, ship2.stern));
+        int sign1 = Math.Sign(det1);
+        int sign2 = Math.Sign(det2);
 
-        if(IsPointOnSegment(ship1.bow, ship1.stern, ship2.bow) || 
-           IsPointOnSegment(ship1.bow, ship1.stern, ship2.stern)){
+        if(IsShipsEndpointsIntersecting(ship1, ship2)){
             return true;
         }
         else if(sign1 != sign2){
@@ -63,12 +69,12 @@ public class Helpers{
                 B = new Point(A.x, A.y + length - 1); 
             }
         } 
-        while (!InSquere(A, B));
+        while (!IsSegmentInSquere(A, B));
 
         return (A, B);
     }
 
-    public static bool InSquere(Point A, Point B){
+    public static bool IsSegmentInSquere(Point A, Point B){
         return (A.x >= 0 && A.x < Game.boardSize) &&
                (B.x >= 0 && B.x < Game.boardSize) &&
                (A.y >= 0 && A.y < Game.boardSize) &&
@@ -89,7 +95,7 @@ public class Helpers{
         return Math.Min(A.x, B.x) <= C.x && C.x <= Math.Max(A.x, B.x) &&
                Math.Min(A.y, B.y) <= C.y && C.y <= Math.Max(A.y, B.y) && 
                IsCollinear(A, B, C);
-        }
+    }
 
     public static List<List<T>> Initialize2DListWithValues<T>(int size, T value)
     {

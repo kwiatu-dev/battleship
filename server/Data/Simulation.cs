@@ -4,6 +4,7 @@ using ndc.Data.Models;
 namespace ndc.Data;
 
 public class Simulation: Game{
+    public int rounds { get; set; }
     public new Bot player1 { get; }
     public new Bot player2 { get; }
 
@@ -12,20 +13,18 @@ public class Simulation: Game{
     }
 
     public Simulation(Bot player1, Bot player2): base(player1, player2){
+        this.rounds = 0;
         this.player1 = player1;
         this.player2 = player2;
         Init();
     }
 
     public void Init(){
-        SetBoardForPlayers();
+        PlaceShipsOnTheBoardForPlayers();
         StartGame();
     }
 
-    private void SetBoardForPlayers(){
-        player1.board = new Board(Game.boardSize);
-        player2.board = new Board(Game.boardSize);
-
+    private void PlaceShipsOnTheBoardForPlayers(){
         foreach(KeyValuePair<string, int> kvp in Game.ships){
             string type = kvp.Key;
             int size = kvp.Value;
@@ -58,6 +57,12 @@ public class Simulation: Game{
                 hit,
                 sunk
             });
+
+            if(++rounds > 200) break;
+        }
+
+        if(rounds > 200){
+            throw new ArgumentException("Exceeded the maximum number of rounds");
         }
     }
 }

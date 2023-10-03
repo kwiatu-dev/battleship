@@ -10,19 +10,24 @@ public class Bot: Player{
 
     public Point NextGuess(){
         List<List<int>> map = GenerateProbabilityMap();
+        Point guess = FindMaxPropability(map);
 
-        return FindMaxPropability(map);
+        if(guess.x == -1 || guess.y == -1){
+            throw new ArgumentException("Invalid guess coordinates");
+        }
+
+        return guess;
     }
 
     private Point FindMaxPropability(List<List<int>> map){
-        int maxPropability = -1;
+        int maxPropability = 0;
         Point p = new Point(-1, -1);
 
-        for(int row = 0; row < Game.boardSize; row++){
-            for(int col = 0; col < Game.boardSize; col++){
-                if(maxPropability < map[row][col]){
-                    maxPropability = map[row][col];
-                    p = new Point(col, row);
+        for(int y = 0; y < Game.boardSize; y++){
+            for(int x = 0; x < Game.boardSize; x++){
+                if(maxPropability < map[y][x]){
+                    maxPropability = map[y][x];
+                    p = new Point(x, y);
                 }
             }
         }
@@ -37,18 +42,17 @@ public class Bot: Player{
             int shipSize = kvp.Value;
             int useSize = shipSize - 1;
 
-            for(int row = 0; row < Game.boardSize; row++){
-                for(int col = 0; col < Game.boardSize; col++){
-                    if(shots[row][col] == false){
-                        CheckAllPosibilitiesWhereShipWillFitOnBoard(row, col, useSize, map);
+            for(int y = 0; y < Game.boardSize; y++){
+                for(int x = 0; x < Game.boardSize; x++){
+                    if(shots[y][x] == false){
+                        CheckAllPosibilitiesWhereShipWillFitOnBoard(x, y, useSize, map);
                     }
 
-                    if(shots[row][col] == true && sinkings[row][col] == true){
-                        IncreasePropabilityNearSuccessfulHits(row, col, map);
+                    if(shots[y][x] == true && sinkings[y][x] == true){
+                        IncreasePropabilityNearSuccessfulHits(x, y, map);
                     }
-
-                    if(shots[row][col] == true && sinkings[row][col] == false){
-                        DecreasePropabilityForMisses(row, col, map);
+                    else if(shots[y][x] == true && sinkings[y][x] == false){
+                        DecreasePropabilityForMisses(x, y, map);
                     }
                 }
             }
@@ -57,34 +61,34 @@ public class Bot: Player{
         return map;
     }
 
-    private void CheckAllPosibilitiesWhereShipWillFitOnBoard(int row, int col, int size, List<List<int>> map){
+    private void CheckAllPosibilitiesWhereShipWillFitOnBoard(int x, int y, int size, List<List<int>> map){
         List<Tuple<Point, Point>> endpoints = new List<Tuple<Point, Point>>();
                         
-        if (row - size >= 0){
+        if (y - size >= 0){
             endpoints.Add(new Tuple<Point, Point>(
-                new Point(row - size, col), 
-                new Point(row, col)
+                new Point(x, y - size), 
+                new Point(x, y)
             ));
         }
 
-        if (row + size <= 9){
+        if (y + size <= 9){
             endpoints.Add(new Tuple<Point, Point>(
-                new Point(row, col), 
-                new Point(row + size, col)
+                new Point(x, y), 
+                new Point(x, y + size)
             ));
         }
 
-        if (col - size >= 0){
+        if (x - size >= 0){
             endpoints.Add(new Tuple<Point, Point>(
-                new Point(row, col - size), 
-                new Point(row, col)
+                new Point(x - size, y), 
+                new Point(x, y)
             ));
         }
 
-        if (col + size <= 9){
+        if (x + size <= 9){
             endpoints.Add(new Tuple<Point, Point>(
-                new Point(row, col), 
-                new Point(row, col + size)
+                new Point(x, y), 
+                new Point(x + size, y)
             ));
         }
 
@@ -93,7 +97,7 @@ public class Bot: Player{
 
             for (int i = bow.y; i <= stern.y; i++){
                 for (int j = bow.x; j <= stern.x; j++){
-                    if (shots[i][j] != false){
+                    if (shots[i][j] == true){
                         zeros = false;
                         break;
                     }
@@ -112,45 +116,45 @@ public class Bot: Player{
         }
     }
 
-    private void IncreasePropabilityNearSuccessfulHits(int row, int col, List<List<int>> map){
-        if(row + 1 < Game.boardSize && shots[row + 1][col] == false){
-            if(row - 1 >= 0 && sinkings[row - 1][col] == true){
-                map[row + 1][col] += 15;
+    private void IncreasePropabilityNearSuccessfulHits(int x, int y, List<List<int>> map){
+        if(y + 1 < Game.boardSize && shots[y + 1][x] == false){
+            if(y - 1 >= 0 && sinkings[y - 1][x] == true){
+                map[y + 1][x] += 15;
             }
             else{
-                map[row + 1][col] += 10;
+                map[y + 1][x] += 10;
             }
         }
 
-        if(row - 1 >= 0 && shots[row - 1][col] == false){
-            if(row + 1 < Game.boardSize && sinkings[row + 1][col] == true){
-                map[row - 1][col] += 15;
+        if(y - 1 >= 0 && shots[y - 1][x] == false){
+            if(y + 1 < Game.boardSize && sinkings[y + 1][x] == true){
+                map[y - 1][x] += 15;
             }
             else{
-                map[row - 1][col] += 10;
+                map[y - 1][x] += 10;
             }
         }
 
-        if(col + 1 < Game.boardSize && shots[row][col + 1] == false){
-            if(col - 1 >= 0 && sinkings[row][col - 1] == true){
-                map[row][col + 1] += 15;
+        if(x + 1 < Game.boardSize && shots[y][x + 1] == false){
+            if(x - 1 >= 0 && sinkings[y][x - 1] == true){
+                map[y][x + 1] += 15;
             }
             else{
-                map[row][col + 1] += 10;
+                map[y][x + 1] += 10;
             }
         }
 
-        if(col - 1 >= 0 && shots[row][col - 1] == false){
-            if(col + 1 < Game.boardSize && sinkings[row][col + 1] == true){
-                map[row][col - 1] += 15;
+        if(x - 1 >= 0 && shots[y][x - 1] == false){
+            if(x + 1 < Game.boardSize && sinkings[y][x + 1] == true){
+                map[y][x - 1] += 15;
             }
             else{
-                map[row][col - 1] += 10;
+                map[y][x - 1] += 10;
             }
         }
     }
 
-    private void DecreasePropabilityForMisses(int row, int col, List<List<int>> map){
-        map[row][col] = 0;
+    private void DecreasePropabilityForMisses(int x, int y, List<List<int>> map){
+        map[y][x] = 0;
     }
 }
