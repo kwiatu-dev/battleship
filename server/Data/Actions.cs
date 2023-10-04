@@ -17,7 +17,16 @@ public class Actions{
                 oponent.board.units--;
                 hit = true;
                 player.sinkings[p.y][p.x] = true;
-                if(ship.hp == 0) sunk = true;
+
+                if(ship.hp == 0){
+                    sunk = true;
+
+                    for(int y = ship.bow.y; y <= ship.stern.y; y++){
+                        for(int x = ship.bow.x; x <= ship.stern.x; x++){
+                            player.destroyed[y][x] = true;
+                        }
+                    }
+                } 
 
                 if(ship.hp < 0){
                     throw new ArgumentException("Health points cannot be less than 0");

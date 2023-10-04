@@ -1,6 +1,11 @@
 <template>
     <div>
-        <div class="w-full text-xl font-medium text-center uppercase mb-4">{{ player.id }}</div>
+        <Statistics 
+            class="flex flex-col items-center lg:flex-row lg:items-start" 
+            :player="player"
+            :hits="hits"
+            :misses="misses"
+        />
         <table class="w-full">
             <tr>
                 <td>
@@ -23,11 +28,14 @@
                 </td>
             </tr>
         </table>
+        <Legend class="w-full flex flex-row flex-wrap gap-x-6 gap-y-2 my-2" />
     </div>
 </template>
 
 <script setup>
+import Legend from '@/components/Blocks/Legend.vue';
 import { useBattleShipStore } from '@/stores/battleship'
+import Statistics from '@/components/Blocks/Statistics.vue';
 
 const { colors } = useBattleShipStore();
 const alphabet = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
@@ -37,6 +45,8 @@ const props = defineProps({
     grid: Array,
     size: Number,
     shots: Array,
+    hits: Number,
+    misses: Number,
 })
 </script>
 

@@ -15,7 +15,7 @@ public class SimulationTests {
         Bot player1;
         Bot player2;
         Simulation game;
-        int numberOfSimulations = 100; 
+        int numberOfSimulations = 1000; 
 
         for(int i = 0; i < numberOfSimulations; i++){
             player1 = new Bot("player-1");

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, reactive } from 'vue'
+import { reactive } from 'vue'
 
 export const useBattleShipStore = defineStore('battleship', {
   state(){
@@ -34,8 +34,13 @@ export const useBattleShipStore = defineStore('battleship', {
             turn: battleship.value.history[0].playerId === battleship.value.player1.id ? battleship.value.player1 : battleship.value.player2,
             round: 0,
             rounds: [],
-            shots1: ref(Array.from({ length: battleship.value.player1.board.size }, () => Array(battleship.value.player1.board.size).fill(false))),
-            shots2: ref(Array.from({ length: battleship.value.player2.board.size }, () => Array(battleship.value.player2.board.size).fill(false))),
+            shots1: Array.from({ length: battleship.value.player1.board.size }, () => Array(battleship.value.player1.board.size).fill(false)),
+            shots2: Array.from({ length: battleship.value.player2.board.size }, () => Array(battleship.value.player2.board.size).fill(false)),
+            hits1: 0,
+            hits2: 0,
+            misses1: 0,
+            misses2: 0,
+            winner: null,
           })
 
           return game

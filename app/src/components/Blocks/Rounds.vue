@@ -1,5 +1,5 @@
 <template>
-    <div class="border border-black my-8 p-4">
+    <div class="border border-black mt-2 p-4">
         <ul>
             <li v-for="(item, index) in reverseRounds()" :key="index">
                 <span class="text-gray-300 font-medium">{{ rounds.length - index }}: </span>

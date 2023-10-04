@@ -48,7 +48,7 @@ public class Bot: Player{
                         CheckAllPosibilitiesWhereShipWillFitOnBoard(x, y, useSize, map);
                     }
 
-                    if(shots[y][x] == true && sinkings[y][x] == true){
+                    if(shots[y][x] == true && sinkings[y][x] == true && destroyed[y][x] == false){
                         IncreasePropabilityNearSuccessfulHits(x, y, map);
                     }
                     else if(shots[y][x] == true && sinkings[y][x] == false){
