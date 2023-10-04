@@ -43,20 +43,29 @@ public class Simulation: Game{
             if(turn == player1){
                 shot = player1.NextGuess();
                 (hit, sunk) = Fire(shot, player1, player2);
+
+                history.Add(new {
+                    playerId = turn.id,
+                    shot,
+                    hit,
+                    sunk
+                });
+
                 turn = player2;
             }
             else if(turn == player2){
                 shot = player2.NextGuess();
                 (hit, sunk) = Fire(shot, player2, player1);
+
+                history.Add(new {
+                    playerId = turn.id,
+                    shot,
+                    hit,
+                    sunk
+                });
+
                 turn = player1;
             }
-
-            history.Add(new {
-                playerId = turn.id,
-                shot,
-                hit,
-                sunk
-            });
 
             if(++rounds > 200) break;
         }

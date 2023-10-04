@@ -1,69 +1,43 @@
 <script setup>
-// import { useBattleShipStore } from '@/stores/battleship'
+import Board from '@/components/Blocks/Board.vue';
+import Legend from '@/components/Blocks/Legend.vue';
+import Rounds from '@/components/Blocks/Rounds.vue';
+import { ref } from 'vue'
+import { useBattleShipStore } from '@/stores/battleship'
 
-// const { getBattleShipData, battleship } = useBattleShipStore();
-// await getBattleShipData();
+const { battleship } = useBattleShipStore();
+const game = await battleship
 
-const endpoint = location.hostname.indexOf("localhost") >=0 ? "http://localhost:8000/api/battleship" : "/api/battleship"
-const res = await fetch(endpoint);
-const battleship = await res.json();
+const next = () => {
+    if(game.round >= game.history.length) return;
+    const item = game.history[game.round]
+    game.rounds.push(item);
 
-const colors = {
-   "Carrier": 'bg-red-900',
-   "Battleship": 'bg-amber-400',
-   "Destroyer": 'bg-lime-600',
-   "Submarine": 'bg-emerald-600',
-   "Patrol Boat": 'bg-indigo-700',
+    if(item.playerId === game.player1.id){
+        game.shots1[item.shot.y][item.shot.x] = true 
+        game.turn = game.player2
+    }
+    else if(item.playerId === game.player2.id){
+        game.shots2[item.shot.y][item.shot.x] = true 
+        game.turn = game.player1
+    }
+
+    game.round++
 }
-
-const size = battleship.value.player1.board.size
-const grid1 = battleship.value.player1.board.grid
-const grid2 = battleship.value.player2.board.grid
-const history = battleship.value.history
-console.log(battleship.value.history)
 </script>
 
 <template>
-    <div class="container h-screen flex items-center mx-auto">
-        <div class="flex flex-row flex-nowrap gap-8">
-            <div class="w-1/2">
-                <div class="w-full text-xl font-medium text-center">PLAYER 1</div>
-                <table class="w-full table-fixed">
-                    <tr>
-                        <td></td>
-                        <td v-for="num in size" :key="num" class="text-center p-4">{{ num }}</td>
-                    </tr>
-                    <tr v-for="(row, y) in size" :key="y">
-                        <td class="text-center p-4">1</td>
-                        <td 
-                        v-for="(col, x) in size" :key="x" 
-                        class="border text-center p-4" 
-                        :class="colors[grid1[size - y - 1][x]]"
-                        >
-                            <div></div>
-                        </td>
-                    </tr>
-                </table>
+    <div class="container flex flex-col items-center justify-center mx-auto px-4">
+        <Legend class="w-full flex flex-row flex-wrap gap-6 justify-center my-8" />
+        <div class="w-full flex flex-col items-center md:flex-row md:flex-nowrap md:justify-center gap-8">
+            <Board class="flex-1" :player="game.player1" :grid="game.grid1" :size="game.size" :shots="game.shots2"/>
+            <Board class="flex-1" :player="game.player2" :grid="game.grid2" :size="game.size" :shots="game.shots1"/>
+        </div>
+        <div class="w-full flex flex-col">
+            <div class="mx-auto mt-8">
+                <button @click="next" class="text-white bg-green-600 border-0 py-2 px-6 focus:outline-none hover:bg-green-700 text-lg">{{ game.turn.id }} makes a move</button>
             </div>
-            <div class="w-1/2">
-                <div class="w-full text-xl font-medium text-center">PLAYER 2</div>
-                <table class="w-full table-fixed">
-                    <tr>
-                        <td></td>
-                        <td v-for="num in size" :key="num" class="text-center p-4">{{ num }}</td>
-                    </tr>
-                    <tr v-for="(row, y) in size" :key="y">
-                        <td class="text-center p-4">1</td>
-                        <td 
-                        v-for="(col, x) in size" :key="x" 
-                        class="border text-center p-4"
-                        :class="colors[grid2[size - y - 1][x]]"
-                        >
-                            <div></div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            <Rounds :size="game.size" :rounds="game.rounds" />
         </div>
     </div>
 </template>
