@@ -19,9 +19,28 @@ public class Simulation: Game{
         Init();
     }
 
+    private void Start(){
+        while(player1.board.units > 0 && player2.board.units > 0){
+            if(turn == player1){
+                PlayerAtackOponent(player1, player2);
+                turn = player2;
+            }
+            else if(turn == player2){
+                PlayerAtackOponent(player2, player1);
+                turn = player1;
+            }
+
+            if(++rounds > 200) break;
+        }
+
+        if(rounds > 200){
+            throw new ArgumentException("Exceeded the maximum number of rounds");
+        }
+    }
+
     public void Init(){
         PlaceShipsOnTheBoardForPlayers();
-        StartGame();
+        Start();
     }
 
     private void PlaceShipsOnTheBoardForPlayers(){
@@ -35,43 +54,18 @@ public class Simulation: Game{
         }
     }
 
-    private void StartGame(){
-        while(player1.board.units > 0 && player2.board.units > 0){
-            Point shot = new Point(-1, -1);
-            bool hit = false, sunk = false;
+    private void PlayerAtackOponent(Bot player, Bot oponent){
+        Point shot;
+        bool hit, sunk;
 
-            if(turn == player1){
-                shot = player1.NextGuess();
-                (hit, sunk) = Fire(shot, player1, player2);
+        shot = player.NextGuess();
+        (hit, sunk) = Fire(shot, player, oponent);
 
-                history.Add(new {
-                    playerId = turn.id,
-                    shot,
-                    hit,
-                    sunk
-                });
-
-                turn = player2;
-            }
-            else if(turn == player2){
-                shot = player2.NextGuess();
-                (hit, sunk) = Fire(shot, player2, player1);
-
-                history.Add(new {
-                    playerId = turn.id,
-                    shot,
-                    hit,
-                    sunk
-                });
-
-                turn = player1;
-            }
-
-            if(++rounds > 200) break;
-        }
-
-        if(rounds > 200){
-            throw new ArgumentException("Exceeded the maximum number of rounds");
-        }
+        history.Add(new {
+            playerId = turn.id,
+            shot,
+            hit,
+            sunk
+        });
     }
 }
